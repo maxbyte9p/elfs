@@ -1,0 +1,24 @@
+--- a/SPECS/audit.spec	2023-09-11 10:06:38.434996520 -0400
++++ b/SPECS/audit.spec	2023-09-11 10:07:32.733076938 -0400
+@@ -101,7 +101,6 @@
+ %patch4 -p1
+ 
+ cp /usr/include/linux/audit.h lib/
+-%patch5 -p1
+ 
+ autoreconf -fv --install
+ 
+@@ -145,13 +144,6 @@
+ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
+ touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
+ 
+-# undo the workaround
+-cur=`pwd`
+-cd $RPM_BUILD_ROOT
+-patch -p1 < %{PATCH6}
+-find . -name '*.orig' -delete
+-cd $cur
+-
+ %check
+ make check
+ # Get rid of make files so that they don't get packaged.

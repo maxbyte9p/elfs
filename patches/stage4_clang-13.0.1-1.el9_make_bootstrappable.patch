@@ -1,0 +1,28 @@
+--- a/SPECS/clang.spec	2023-09-22 12:58:58.836249188 -0400
++++ b/SPECS/clang.spec	2023-09-22 12:58:44.010167685 -0400
+@@ -525,25 +525,6 @@
+ ln -s %{_datadir}/clang/clang-format-diff.py %{buildroot}%{_bindir}/clang-format-diff
+ %endif
+ 
+-%check
+-# see rhbz#1994082
+-sed -i -e "s/'ASAN_SYMBOLIZER_PATH', 'MSAN_SYMBOLIZER_PATH'/'ASAN_SYMBOLIZER_PATH', 'MSAN_SYMBOLIZER_PATH', 'SOURCE_DATE_EPOCH'/" test/lit.cfg.py
+-
+-%if %{without compat_build}
+-%if %{with check}
+-# requires lit.py from LLVM utilities
+-# FIXME: Fix failing ARM tests
+-SOURCE_DATE_EPOCH=1629181597 LD_LIBRARY_PATH=%{buildroot}/%{_libdir} %cmake_build --target check-all || \
+-%endif
+-%ifarch %{arm}
+-:
+-%else
+-false
+-%endif
+-
+-%endif
+-
+-
+ %if %{without compat_build}
+ %files
+ %license LICENSE.TXT

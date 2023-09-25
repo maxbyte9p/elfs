@@ -1,0 +1,80 @@
+--- a/SPECS/python3.9.spec	2023-09-12 12:46:39.283648659 -0400
++++ b/SPECS/python3.9.spec	2023-09-12 12:47:49.597935288 -0400
+@@ -64,7 +64,6 @@
+ 
+ # Whether to use RPM build wheels from the python-{pip,setuptools}-wheel package
+ # Uses upstream bundled prebuilt wheels otherwise
+-%bcond_without rpmwheels
+ 
+ # Expensive optimizations (mainly, profile-guided optimizations)
+ %bcond_without optimizations
+@@ -267,11 +266,6 @@
+ # workaround http://bugs.python.org/issue19804 (test_uuid requires ifconfig)
+ BuildRequires: /usr/sbin/ifconfig
+ 
+-%if %{with rpmwheels}
+-BuildRequires: %{python_wheel_pkg_prefix}-setuptools-wheel >= 53.0.0-7
+-BuildRequires: %{python_wheel_pkg_prefix}-pip-wheel >= 21.2.3-4
+-%endif
+-
+ %if %{without bootstrap}
+ # for make regen-all and distutils.tests.test_bdist_rpm
+ BuildRequires: python%{pybasever}
+@@ -540,13 +534,8 @@
+ %package -n %{pkgname}-libs
+ Summary:        Python runtime libraries
+ 
+-%if %{with rpmwheels}
+-Requires: %{python_wheel_pkg_prefix}-setuptools-wheel >= 53.0.0-7
+-Requires: %{python_wheel_pkg_prefix}-pip-wheel >= 21.2.3-4
+-%else
+ Provides: bundled(python3dist(pip)) = %{pip_version}
+ Provides: bundled(python3dist(setuptools)) = %{setuptools_version}
+-%endif
+ 
+ # Provides for the bundled libmpdec
+ Provides: bundled(mpdecimal) = %{libmpdec_version}
+@@ -749,13 +738,8 @@
+ Provides: python%{pyshortver} = %{version}-%{release}
+ Obsoletes: python%{pyshortver} < %{version}-%{release}
+ 
+-%if %{with rpmwheels}
+-Requires: %{python_wheel_pkg_prefix}-setuptools-wheel >= 53.0.0-7
+-Requires: %{python_wheel_pkg_prefix}-pip-wheel >= 21.2.3-4
+-%else
+ Provides: bundled(python3dist(pip)) = %{pip_version}
+ Provides: bundled(python3dist(setuptools)) = %{setuptools_version}
+-%endif
+ 
+ # Provides for the bundled libmpdec
+ Provides: bundled(mpdecimal) = %{libmpdec_version}
+@@ -786,14 +770,6 @@
+ # Apply patches up to 188
+ %autopatch -M 188
+ 
+-%if %{with rpmwheels}
+-# Temporary workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1954999
+-%{?!apply_patch:%define apply_patch(qp:m:) {%__apply_patch %**}}
+-
+-%apply_patch -q %{PATCH189}
+-rm Lib/ensurepip/_bundled/*.whl
+-%endif
+-
+ # Apply the remaining patches
+ %autopatch -m 190
+ 
+@@ -1371,14 +1347,10 @@
+ %{pylibdir}/ensurepip/*.py
+ %{pylibdir}/ensurepip/__pycache__/*%{bytecode_suffixes}
+ 
+-%if %{with rpmwheels}
+-%exclude %{pylibdir}/ensurepip/_bundled
+-%else
+ %dir %{pylibdir}/ensurepip/_bundled
+ %{pylibdir}/ensurepip/_bundled/*.whl
+ %{pylibdir}/ensurepip/_bundled/__init__.py
+ %{pylibdir}/ensurepip/_bundled/__pycache__/*%{bytecode_suffixes}
+-%endif
+ 
+ %dir %{pylibdir}/concurrent/
+ %dir %{pylibdir}/concurrent/__pycache__/

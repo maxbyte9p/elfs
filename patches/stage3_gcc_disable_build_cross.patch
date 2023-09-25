@@ -1,0 +1,11 @@
+--- a/SPECS/gcc.spec	2023-09-06 16:47:29.947699890 -0400
++++ b/SPECS/gcc.spec	2023-09-06 16:47:59.141912437 -0400
+@@ -115,7 +115,7 @@
+ %endif
+ %if 0%{?rhel} == 9
+ %ifarch x86_64
+-%global build_cross 1
++%global build_cross 0
+ %else
+ %global build_cross 0
+ %endif

@@ -1,0 +1,17 @@
+--- a/SPECS/binutils.spec	2023-09-18 11:24:32.643739782 -0400
++++ b/SPECS/binutils.spec	2023-09-18 11:26:02.385052829 -0400
+@@ -318,10 +318,10 @@
+ # (libfd.a, libopcodes.a libiberty.a) use the same LTO version as the one
+ # that will be used by consumers of GTS binutils.
+ # Note - during GTS bootstrap these have to be changed to the systemOS versions.
+-BuildRequires: %{?scl_prefix}gcc
+-BuildRequires: %{?scl_prefix}gcc-c++
+-%define gcc_for_libraries %{?_scl_root}/usr/bin/gcc
+-%define gxx_for_libraries %{?_scl_root}/usr/bin/g++
++BuildRequires: gcc
++BuildRequires: gcc-c++
++%define gcc_for_libraries /usr/bin/gcc
++%define gxx_for_libraries /usr/bin/g++
+ # Note - during GTS bootstrap it may be necessary to build the binutils without
+ # annobin annotations.
+ # %%undefine _annotated_build

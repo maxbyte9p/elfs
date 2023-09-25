@@ -1,0 +1,19 @@
+--- a/SPECS/rust.spec	2023-09-15 10:15:03.355057319 -0400
++++ b/SPECS/rust.spec	2023-09-15 10:16:09.152395386 -0400
+@@ -1,6 +1,6 @@
+ # Only x86_64 and i686 are Tier 1 platforms at this time.
+ # https://doc.rust-lang.org/nightly/rustc/platform-support.html
+-%global rust_arches x86_64 i686 aarch64 ppc64le s390x
++%global rust_arches x86_64
+ 
+ # The channel can be stable, beta, or nightly
+ %{!?channel: %global channel stable}
+@@ -17,7 +17,7 @@
+ # a waste of lookaside cache space when they're most often unused.
+ # Run "spectool -g rust.spec" after changing this and then "fedpkg upload" to
+ # add them to sources. Remember to remove them again after the bootstrap build!
+-#global bootstrap_arches %%{rust_arches}
++%global bootstrap_arches %%{rust_arches}
+ 
+ # Define a space-separated list of targets to ship rust-std-static-$triple for
+ # cross-compilation. The packages are noarch, but they're not fully

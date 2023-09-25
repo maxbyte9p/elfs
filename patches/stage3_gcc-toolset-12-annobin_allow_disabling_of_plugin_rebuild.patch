@@ -1,0 +1,24 @@
+--- a/SPECS/annobin.spec	2023-09-18 16:13:53.855921085 -0400
++++ b/SPECS/annobin.spec	2023-09-18 16:24:11.466000190 -0400
+@@ -56,9 +56,9 @@
+ # to gcc breaks the version installed into the buildroot.  Mote however that
+ # uncommenting the lines below will result in annocheck not passing the rpminspect
+ # tests....
+-# %%if %%{without plugin_rebuild}
+-# %%undefine _annotated_build
+-# %%endif
++%if %{without plugin_rebuild}
++%undefine _annotated_build
++%endif
+ 
+ #---------------------------------------------------------------------------------
+ 
+@@ -82,7 +82,7 @@
+ # We need the gcc-toolset-12 version of gcc to build annobin, as otherwise the versions will not match.
+ %{?scl:Requires:%scl_require_package %{scl} gcc}
+ 
+-BuildRequires: %{?scl_prefix}gcc %{?scl_prefix}annobin-plugin-gcc
++BuildRequires: %{?scl_prefix}gcc
+ %define gcc_for_annobin %{?_scl_root}/usr/bin/gcc
+ 
+ # Make sure that the necessary sub-packages are built.

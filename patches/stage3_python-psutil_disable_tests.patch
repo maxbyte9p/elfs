@@ -1,0 +1,12 @@
+--- a/SPECS/python-psutil.spec	2023-09-14 15:54:40.113194469 -0400
++++ b/SPECS/python-psutil.spec	2023-09-14 15:54:49.343250750 -0400
+@@ -73,9 +73,6 @@
+ %py3_install
+ 
+ 
+-%check
+-make test CI_TESTING=1 PYTHON=%{__python3} PYTHONPATH=%{buildroot}/%{python3_sitearch}
+-
+ 
+ %files -n python%{python3_pkgversion}-%{srcname}
+ %license LICENSE

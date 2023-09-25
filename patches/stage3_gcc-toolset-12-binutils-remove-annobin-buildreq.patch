@@ -1,0 +1,10 @@
+--- a/SPECS/binutils.spec	2023-09-18 10:08:25.304213085 -0400
++++ b/SPECS/binutils.spec	2023-09-18 10:08:45.280320972 -0400
+@@ -320,7 +320,6 @@
+ # Note - during GTS bootstrap these have to be changed to the systemOS versions.
+ BuildRequires: %{?scl_prefix}gcc
+ BuildRequires: %{?scl_prefix}gcc-c++
+-BuildRequires: %{?scl_prefix}annobin-plugin-gcc
+ %define gcc_for_libraries %{?_scl_root}/usr/bin/gcc
+ %define gxx_for_libraries %{?_scl_root}/usr/bin/g++
+ # Note - during GTS bootstrap it may be necessary to build the binutils without

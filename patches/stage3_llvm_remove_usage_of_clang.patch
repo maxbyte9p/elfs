@@ -1,0 +1,22 @@
+--- a/SPECS/llvm.spec	2023-09-14 16:35:13.619549563 -0400
++++ b/SPECS/llvm.spec	2023-09-14 16:37:12.713315250 -0400
+@@ -1,6 +1,10 @@
+ # We are building with clang for faster/lower memory LTO builds.
+ # See https://docs.fedoraproject.org/en-US/packaging-guidelines/#_compiler_macros
+-%global toolchain clang
++# We're not doing this Red Hat my patience is running thin with your spec files
++# We're changing it to gcc and hoping it works
++# Also removing clang from BuildRequires
++# - Maxine
++%global toolchain gcc
+ 
+ # Components enabled if supported by target architecture:
+ %define gold_arches %{ix86} x86_64 %{arm} aarch64 %{power64} s390x
+@@ -110,7 +114,6 @@
+ 
+ BuildRequires:	gcc
+ BuildRequires:	gcc-c++
+-BuildRequires:	clang
+ BuildRequires:	cmake
+ BuildRequires:	ninja-build
+ BuildRequires:	zlib-devel

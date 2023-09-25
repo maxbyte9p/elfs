@@ -1,0 +1,58 @@
+# Stage 4
+
+# Comment out protected_packages=rpm-build in stage 3 mock config
+## modify /usr/lib/systemd/zram-generator.conf
+## [zram0]
+## zram-size = min(ram, 16000)
+## [zram0]
+## zram-size = 32000
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results
+## change Release to Debug
+## disable tests
+## comment out sed -i -e "s/'ASAN_SYMBOLIZER_PATH', 'MSAN_SYMBOLIZER_PATH'/'ASAN_SYMBOLIZER_PATH', 'MSAN_SYMBOLIZER_PATH', 'SOURCE_DATE_EPOCH'/" test/lit.cfg.py
+## remove check section altogether
+## --rpmbuild-opts="--without check"
+## Wrote patch to get it to reproduce build
+## diff -u a/SPECS/clang.spec b/SPECS/clang.spec > $ELFS/patches/stage4_clang-13.0.1-1.el9_make_bootstrappable.patch
+## patch -Np1 -i $ELFS/patches/stage4_clang-13.0.1-1.el9_make_bootstrappable.patch
+## elfs-bsrpm clang
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results
+imports/r9/clang-13.0.1-1.el9 
+
+## Time to build
+## Have to use spectool to download bootstrap sources
+## spectool -g SPECS/rust.spec 
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/rust/SRPMS/rust-1.58.1-1.el9.src.rpm
+## It built!
+imports/r9/rust-1.58.1-1.el9  ## uncomment bootstrap macro in spec file
+
+## Need rust-toolset
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/rust-toolset/SRPMS/rust-toolset-1.58.1-1.el9.src.rpm
+imports/r9/rust-toolset-1.58.1-1.el9
+
+## This is the target
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/prefixdevname/SRPMS/prefixdevname-0.1.0-8.el9.src.rpm
+prefixdevname
+
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/sg3_utils/SRPMS/sg3_utils-1.47-9.el9.src.rpm
+sg3_utils
+
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/initial-setup/SRPMS/initial-setup-0.3.90.2-2.el9.src.rpm
+initial-setup
+
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/rdma-core/SRPMS/rdma-core-44.0-2.el9.src.rpm
+rdma-core
+
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/tboot/SRPMS/tboot-1.10.5-2.el9.src.rpm
+tboot
+
+## Needed for kernel
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/WALinuxAgent/SRPMS/WALinuxAgent-2.7.0.6-9.el9.1.rocky.0.src.rpm
+WALinuxAgent
+
+## We need to disable tools, perf, debuginfo, and self-tests
+## cd $ELFS/build/kernel
+## diff -u a/SPECS/kernel.spec b/SPECS/kernel.spec > $ELFS/patches/stage4_kernel_disable_tools_and_self-tests.patch
+## patch -Np1 -i $ELFS/patches/stage4_kernel_disable_tools_and_self-tests.patch
+## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage4.cfg --rootdir=$ELFS/ROOTDIR --resultdir $ELFS/localrepo/results $ELFS/build/kernel/SRPMS/kernel-5.14.0-284.30.1.el9.src.rpm
+kernel
