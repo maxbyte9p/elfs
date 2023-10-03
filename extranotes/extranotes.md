@@ -145,9 +145,11 @@ elfs-download python-rpm-generators
 elfs-bsrpm python-rpm-generators
 
 STAGE=1 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/python-rpm-generators/SRPMS/python-rpm-generators-12-8.el9.src.rpm
+```
 
-# Make sure we get into the routine of updating the local repos.
-# The next build will fail without the previous RPM macros
+Make sure we get into the routine of updating the local repos.
+The next build will fail without the previous RPM macros
+```
 elfs-repo
 ```
 
@@ -186,12 +188,16 @@ We need to also build a simple bootstrap toolchain for EL specific functionality
 elfs-download binutils
 
 elfs-bsrpm binutils
+```
 
-# --rpmbuild-opts allows us to specify any rpmbuild options for mock to use.
-# --with bootstrap is a build option where we tell binutils to build with a minimal amount of dependencies. 
-# This also allows us to use the least amount of dependencies from Fedora for the build.
+--rpmbuild-opts allows us to specify any rpmbuild options for mock to use.
+--with bootstrap is a build option where we tell binutils to build with a minimal amount of dependencies. 
+This also allows us to use the least amount of dependencies from Fedora for the build.
+```
 STAGE=1 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--with bootstrap" $ELFS/build/binutils/SRPMS/binutils-2.35.2-37.el9.src.rpm
+```
 
+```
 elfs-repo
 ```
 
@@ -215,13 +221,17 @@ elfs-repo
 elfs-download glibc
 
 elfs-bsrpm glibc
+```
 
-# We have to invoke mock normally without the elfs-mock wrapper as elfs-mock is being a little fussy about quotations
-# Once again we use the bootstrap option for glibc for the same reasons we use it for binutils.
-# --define '_unpackaged_files_terminate_build 0' This option is not a very safe option to use.
-# It should never be used outside of testing or bootstrapping. Without this option our build will fail.
+We have to invoke mock normally without the elfs-mock wrapper as elfs-mock is being a little fussy about quotations
+Once again we use the bootstrap option for glibc for the same reasons we use it for binutils.
+--define '_unpackaged_files_terminate_build 0' This option is not a very safe option to use.
+It should never be used outside of testing or bootstrapping. Without this option our build will fail.
+```
 mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage2.cfg --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--with bootstrap --define '_unpackaged_files_terminate_build 0'" $ELFS/build/glibc/SRPMS/glibc-2.34-60.el9.src.rpm
+```
 
+```
 elfs-repo
 ```
 
@@ -255,10 +265,15 @@ Since we're only bootstrapping for x86_64 we need to remove some unwanted and un
 elfs-download gcc
 
 cd $ELFS/build/gcc
+```
 
-# This patch will disable the cross_build macro for x86_64.
+
+This patch will disable the cross_build macro for x86_64.
+```
 patch -Np1 -i $ELFS/patches/stage3_gcc_disable_build_cross.patch
+```
 
+```
 elfs-bsrpm gcc
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/gcc/SRPMS/gcc-11.3.1-4.3.el9.src.rpm
@@ -385,10 +400,14 @@ Audit has a work around patch for flex array in the source code which helps it b
 elfs-download audit
 
 cd $ELFS/build/audit
+```
 
 # Removes use of the flex array workaround patch in the spec file.
+```
 patch -Np1 -i $ELFS/patches/stage3_audit_remove_workaround_patching.patch
+```
 
+```
 elfs-bsrpm
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/audit/SRPMS/audit-3.0.7-103.el9.src.rpm
@@ -470,6 +489,7 @@ elfs-repo
 
 
 ### filesystem
+```
 elfs-download filesystem
 
 elfs-bsrpm filesystem
@@ -499,10 +519,14 @@ python3.9 is pretty fussy about using the "--without rpmwheels" build option. It
 elfs-download python3.9
 
 cd $ELFS/build/python3.9
+```
 
-# Removes dependency on rpmwheels packages from spec file
+Removes dependency on rpmwheels packages from spec file
+```
 patch -Np1 -i $ELFS/patches/stage3_python3.9_remove_rpmwheels_dependency.patch
+```
 
+```
 elfs-bsrpm python3.9
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/python3.9/SRPMS/python3.9-3.9.16-1.el9.1.src.rpm
@@ -539,11 +563,15 @@ elfs-repo
 elfs-download gnutls
 
 elfs-bsrpm gnutls
+```
 
-# Certain tests will fail during our bootstrap of gnutls.
-# Some of the tests are unable to pass because of our barebones EL environment
+Certain tests will fail during our bootstrap of gnutls.
+Some of the tests are unable to pass because of our barebones EL environment
+```
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--without tests" $ELFS/build/gnutls/SRPMS/gnutls-3.7.6-21.el9.src.rpm
+```
 
+```
 elfs-repo
 ```
 
@@ -552,10 +580,14 @@ elfs-repo
 elfs-download nss
 
 elfs-bsrpm nss
+```
 
-# Build without tests as they fail in our minimal EL environment
+Build without tests as they fail in our minimal EL environment
+```
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--without tests" $ELFS/build/nss/SRPMS/nss-3.90.0-3.el9.src.rpm
+```
 
+```
 elfs-repo
 ```
 
@@ -1380,10 +1412,14 @@ elfs-repo
 elfs-download python-psutil
 
 cd $ELFS/build/python-psutil
+```
 
-# The tests fail when building this package inside of Mock, so we have to disable them.
+The tests fail when building this package inside of Mock, so we have to disable them.
+```
 patch -Np1 -i $ELFS/patches/stage3_python-psutil_disable_tests.patch
+```
 
+```
 elfs-bsrpm python-psutil
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/python-psutil/SRPMS/python-psutil-5.8.0-12.el9.src.rpm
@@ -1415,16 +1451,22 @@ elfs-repo
 
 ## llvm
 llvm is required in order to bootstrap clang later on. We also need to build an earlier version of llvm as it doesn't require clang in order to build eliminating the chicken or the egg problem.
-```
-# Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific llvm version.
-git clone -b "imports/r9/llvm-13.0.1-1.el9" https://git.rockylinux.org/staging/rpms/llvm $ELFS/build/llvm
 
-# We have to cd into the directory and run elfs-getsrc ourselves in order to fetch the lookaside sources.
+
+Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific llvm version.
+```
+git clone -b "imports/r9/llvm-13.0.1-1.el9" https://git.rockylinux.org/staging/rpms/llvm $ELFS/build/llvm
+```
+
+ We have to cd into the directory and run elfs-getsrc ourselves in order to fetch the lookaside sources.
+```
 cd $ELFS/build/llvm
 
 elfs-getsrc
+```
 
-# We can now build the source RPM like we normally do
+ We can now build the source RPM like we normally do
+```
 elfs-bsrpm llvm
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/llvm/SRPMS/llvm-13.0.1-1.el9.src.rpm
@@ -1473,20 +1515,29 @@ For my system Clang would make it run out of memory. To counteract that I set my
 zram-size = 32000
 ```
 
-Building Clang
+#### Building Clang
+
+Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific clang version.
 ```
-# Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific clang version.
 git clone -b "imports/r9/clang-13.0.1-1.el9" https://git.rockylinux.org/staging/rpms/clang $ELFS/build/clang
+```
 
-# We need to patch out some tests and settings that don't work well with bootstrapping with ELFS
+```
 cd $ELFS/build/clang
+```
 
-# Make sure we run elfs-getsrc to download lookaside sources
+Make sure we run elfs-getsrc to download lookaside sources
+```
 elfs-getsrc
+```
 
+We need to patch out some tests and settings that don't work well with bootstrapping with ELFS
+```
 patch -Np1 -i $ELFS/patches/stage4_clang-13.0.1-1.el9_make_bootstrappable.patch
+```
 
-# Build our source RPM for Mock and finally build
+Build our source RPM for Mock and finally build
+```
 elfs-bsrpm clang
 
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/clang/SRPMS/clang-13.0.1-1.el9.src.rpm
@@ -1502,19 +1553,27 @@ Rust is needed for building prefixdevname. The bootstrap of rust is pretty simpl
 git clone -b "imports/r9/rust-1.58.1-1.el9" https://git.rockylinux.org/staging/rpms/rust $ELFS/build/rust
 
 cd $ELFS/build/rust
+```
 
-# Apply patch which makes rust bootstrappable
+Apply patch which makes rust bootstrappable
+```
 patch -Np1 -i $ELFS/patches/stage4_rust_make_bootstrappable.patch
+```
 
-# Need to use spectool to download bootstrap sources
+Need to use spectool to download bootstrap sources
+```
 spectool -g SPECS/rust.spec
+```
 
-# Move bootstrap sources to SOURCES directory
+Move bootstrap sources to SOURCES directory
+```
 mv rust-1.57.0-x86_64-unknown-linux-gnu.tar.xz SOURCES/
 mv rustc-1.58.1-src.tar.xz SOURCES/
 mv wasi-libc-ad5133410f66b93a2381db5b542aad5e0964db96.tar.gz SOURCES/
+```
 
-# Create source RPM and build
+Create source RPM and build
+```
 elfs-bsrpm rust
 
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/rust/SRPMS/rust-1.58.1-1.el9.src.rpm
@@ -1649,14 +1708,20 @@ elfs-repo
 ### swig
 ```
 elfs-download swig
+```
 
-# We can't use the elfs-bsrpm wrapper as we need to tell rpmbuild not to make an SRPM requiring ccache files
+We can't use the elfs-bsrpm wrapper as we need to tell rpmbuild not to make an SRPM requiring ccache files
+```
 rpmbuild -bs --define "_topdir $ELFS/build/swig" --define "dist .el9" --without build_ccache_swig $ELFS/build/swig/SPECS/swig.spec
+```
 
-# --without build_ccache_swig 
-# Since EL doesn't use the ccache feature we just disable it
+--without build_ccache_swig 
+Since EL doesn't use the ccache feature we just disable it.
+```
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--without build_ccache_swig" $ELFS/build/swig/SRPMS/swig-4.0.2-8.el9.src.rpm
+```
 
+```
 elfs-repo
 ```
 
@@ -1736,10 +1801,14 @@ elfs-repo
 elfs-download kernel
 
 cd $ELFS/build/kernel
+```
 
-# We need to disable self-tests as we are unable to build and run them yet.
+We need to disable self-tests as we are unable to build and run them yet.
+```
 patch -Np1 -i $ELFS/patches/stage4_kernel_disable_self-tests.patch
+```
 
+```
 elfs-bsrpm kernel
 
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/kernel/SRPMS/kernel-5.14.0-284.30.1.el9.src.rpm
