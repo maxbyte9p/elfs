@@ -1,4 +1,4 @@
 # Stage 2
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage2.cfg --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--with bootstrap --define '_unpackaged_files_terminate_build 0'" 
-glibc
+glibc X

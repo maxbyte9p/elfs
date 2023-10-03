@@ -1,9 +1,9 @@
 # Stage 3
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/tmp
-glibc
+glibc X
 ## We need glibc32 in order to build gcc
-glibc32
+glibc32 X
 
 ## We have to disable cross_build for x86_64 or else glibc wants
 ## sysroot-aarch64 as a build dependency
@@ -11,113 +11,116 @@ glibc32
 ## diff -u a/SPECS/gcc.spec b/SPECS/gcc.spec
 ## patch -Np1 -i $ELFS/patches/stage3_gcc_disable_build_cross.patch
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/tmp
-gcc
+gcc X
+
+redhat-rpm-config X
 
 ## cd $ELFS/build/audit
 ## diff -u a/SPECS/audit.spec b/SPECS/audit.spec
 ## patch -Np1 -i $ELFS/patches/stage3_audit_remove_workaround_patching.patch
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-audit
+audit X
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-basesystem
-bash
-coreutils
-cronie
-rust-srpm-macros
-setup
-filesystem
-openssl
+basesystem X
+bash X
+coreutils X
+cronie X
+rust-srpm-macros X
+setup X
+filesystem X
+openssl X
 
 ## We have to use this patch because the python3.9 SRPM is being fussy about properly using the --without rpmwheels option.
 ## cd $ELFS/build/python3.9
 ## diff -u a/SPECS/python3.9.spec b/SPECS/python3.9.spec
 ## patch -Np1 -i $ELFS/patches/stage3_python3.9_remove_rpmwheels_dependency.patch
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-python3.9
+python3.9 X
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-libxcrypt
-pkgconf
+libxcrypt X
+pkgconf X
 
 ## Certain tests will fail during our bootstrap of gnutls
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results --rpmbuild-opts="--without tests"
-gnutls
+gnutls X
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-crypto-policies
-brotli
-groff
-krb5
-libidn2
-nghttp2
-libpsl
-openssl-pkcs11
-libssh
-openldap
-openssh
-zlib
-stunnel
-valgrind
+nss X # Needed to add this in for crypto-policies 
+crypto-policies X
+brotli X
+groff X
+krb5 X
+libidn2 X
+nghttp2 X
+libpsl X
+openssl-pkcs11 X
+libssh X
+openldap X
+openssh X
+zlib X
+stunnel X
+valgrind X
 ## Now builds after having all previous dependencies built 
 ## After valgrind it built with no failures
-curl
-libsolv
-doxygen
-librepo # Builds now after doxygen
-libmodulemd
-libdnf
-dnf
-e2fsprogs
-firewalld
-grubby
-hostname
-iproute
-iputils
-irqbalance
-kbd
-kexec-tools
-less
-logrotate
-man-db
-ncurses
-parted
-passwd
-libsepol
-libselinux
-libsemanage
-policycoreutils
-procps-ng
-rootfiles
-rpm
-rsyslog
-selinux-policy
-shadow-utils
-sssd
-sudo
-kmod
-libcap
-util-linux
-pam
-cryptsetup
-dbus
-acl
-systemd
-lvm2
-xfsprogs
-NetworkManager
-authselect
-dnf-plugins-core
-dracut
-initscripts
-linux-firmware
-sysfsutils
-lshw
-lsscsi
-microcode_ctl
+curl X
+libsolv X
+doxygen X
+librepo X # Builds now after doxygen
+libmodulemd X
+libdnf X
+dnf X
+e2fsprogs X
+firewalld X
+grubby X
+hostname X
+iproute X
+iputils X
+irqbalance X
+kbd X
+kexec-tools X
+less X
+logrotate X
+man-db X
+ncurses X
+parted X
+passwd X
+libsepol X
+libselinux X
+libsemanage X
+policycoreutils X
+procps-ng X
+rootfiles X
+rpm X
+rsyslog X
+selinux-policy X
+shadow-utils X
+sssd X
+sudo X
+kmod X
+libcap X
+util-linux X
+pam X
+cryptsetup X
+dbus X
+acl X
+systemd X
+lvm2 X
+xfsprogs X
+NetworkManager X
+authselect X
+dnf-plugins-core X
+dracut X
+initscripts X
+linux-firmware X
+sysfsutils X
+lshw X
+lsscsi X
+microcode_ctl X
 
 ### Need rust for prefixdevname
-python-sphinx
+python-sphinx X
 libffi ## Maybe remove
 
 ## Disable tests that fail in mock
@@ -126,22 +129,22 @@ libffi ## Maybe remove
 ## patch -Np1 -i $ELFS/patches/stage3_python-psutil_disable_tests.patch
 ## elfs-bsrpm python-psutil
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-python-psutil
+python-psutil X
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-multilib-rpm-config
-python-setuptools
+multilib-rpm-config X
+python-setuptools X
 
 ## need these
-imports/r9/llvm-13.0.1-1.el9 
+imports/r9/llvm-13.0.1-1.el9 X
 
 ## Rebuild annobin to use new llvm
 ## Move stage 1 annobin out of localrepo
 ## reload repo
 ## use stage1 config to rebuild using llvm-13
-annobin
+annobin # Not needed
 
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage3.cfg --resultdir $ELFS/localrepo/results
-perl-generators
-python-lit
+perl-generators X
+python-lit X

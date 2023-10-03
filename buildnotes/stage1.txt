@@ -1,25 +1,25 @@
 # Stage 1
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage1.cfg --resultdir $ELFS/localrepo/tmp
-redhat-rpm-config
-python-rpm-macros
-perl-srpm-macros
-go-rpm-macros
-lua-rpm-macros
-ocaml-srpm-macros
-efi-rpm-macros
-fonts-rpm-macros
-ghc-srpm-macros
-kernel-srpm-macros
-openblas-srpm-macros
-qt5
-pyproject-rpm-macros
-python-rpm-generators
-python-setup-tools
-rocky-release
+pyproject-rpm-macros X
+kernel-srpm-macros X
+redhat-rpm-config X
+python-rpm-macros X
+perl-srpm-macros X
+go-rpm-macros X
+lua-rpm-macros X
+ocaml-srpm-macros X
+efi-rpm-macros X
+fonts-rpm-macros X
+ghc-srpm-macros X
+openblas-srpm-macros X
+qt5 X
+python-rpm-generators X
+python-setuptools X
+rocky-release X
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage1.cfg --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--with bootstrap" 
-binutils
+binutils X
 
 ## mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage1.cfg --resultdir $ELFS/localrepo/tmp
-annobin
+annobin X
