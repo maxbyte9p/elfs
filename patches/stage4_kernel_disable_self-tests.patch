@@ -1,0 +1,11 @@
+--- a/SPECS/kernel.spec	2023-10-03 14:38:28.224648966 +0000
++++ b/SPECS/kernel.spec	2023-10-03 14:38:47.899112366 +0000
+@@ -212,7 +212,7 @@
+ # kernel-abi-stablelists
+ %define with_kernel_abi_stablelists %{?_without_kernel_abi_stablelists: 0} %{?!_without_kernel_abi_stablelists: 1}
+ # internal samples and selftests
+-%define with_selftests %{?_without_selftests: 0} %{?!_without_selftests: 1}
++%define with_selftests %{?_without_selftests: 0} %{?!_without_selftests: 0}
+ #
+ # Additional options for user-friendly one-off kernel building:
+ #

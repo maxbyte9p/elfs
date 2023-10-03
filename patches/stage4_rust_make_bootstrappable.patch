@@ -1,0 +1,19 @@
+--- a/SPECS/rust.spec	2023-10-02 15:23:36.897057406 +0000
++++ b/SPECS/rust.spec	2023-10-02 15:31:43.289578238 +0000
+@@ -1,6 +1,6 @@
+ # Only x86_64 and i686 are Tier 1 platforms at this time.
+ # https://doc.rust-lang.org/nightly/rustc/platform-support.html
+-%global rust_arches x86_64 i686 aarch64 ppc64le s390x
++%global rust_arches x86_64
+ 
+ # The channel can be stable, beta, or nightly
+ %{!?channel: %global channel stable}
+@@ -15,7 +15,7 @@
+ %global bootstrap_date 2021-12-02
+ 
+ # Only the specified arches will use bootstrap binaries.
+-#global bootstrap_arches %%{rust_arches}
++%global bootstrap_arches %%{rust_arches}
+ 
+ # Define a space-separated list of targets to ship rust-std-static-$triple for
+ # cross-compilation. The packages are noarch, but they're not fully
