@@ -8,7 +8,7 @@ EOF
 
 source ~/.bashrc
 
-if [ "$(basename $(pwd))" != "ELFS" ]; then
+if [ "$(basename $(pwd))" != "elfs" ]; then
 	echo "FATAL: Not in ELFS directory. Cannot setup environment!"
 	return 1
 fi
@@ -17,7 +17,7 @@ ELFS=${ELFS:=$(pwd)}
 
 if [ ! -d "$ELFS/localrepo" ]; then
 	echo "INFO: Making localrepo directory."
-	mkdir -v $ELFS/localrepo/{tmp,results}
+	mkdir -pv $ELFS/localrepo/{tmp,results}
 fi
 
 if [ ! -d "$ELFS/build" ]; then 
