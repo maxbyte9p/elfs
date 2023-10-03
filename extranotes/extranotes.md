@@ -1,6 +1,8 @@
-# Stage 1
+# ELFS v0.1
+
 
 ## Setting up the repos
+
 
 ### Editing the mock config
 Make sure to change baseurl from /home/maxine/ELFS/localrepo/tmp to the desired repo location.
@@ -33,8 +35,6 @@ elfs-bsrpm kernel-srpm-macros
 
 STAGE=1 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/kernel-srpm-macros/SRPMS/kernel-srpm-macros-1.0-12.el9.src.rpm
 ```
-
-
 
 
 ### python-rpm-macros
@@ -402,7 +402,7 @@ elfs-download audit
 cd $ELFS/build/audit
 ```
 
-# Removes use of the flex array workaround patch in the spec file.
+Removes use of the flex array workaround patch in the spec file.
 ```
 patch -Np1 -i $ELFS/patches/stage3_audit_remove_workaround_patching.patch
 ```
