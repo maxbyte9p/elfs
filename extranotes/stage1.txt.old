@@ -1,8 +1,6 @@
-# ELFS v0.1
-
+# Stage 1
 
 ## Setting up the repos
-
 
 ### Editing the mock config
 Make sure to change baseurl from /home/maxine/ELFS/localrepo/tmp to the desired repo location.
@@ -35,6 +33,8 @@ elfs-bsrpm kernel-srpm-macros
 
 STAGE=1 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/kernel-srpm-macros/SRPMS/kernel-srpm-macros-1.0-12.el9.src.rpm
 ```
+
+
 
 
 ### python-rpm-macros
@@ -145,11 +145,9 @@ elfs-download python-rpm-generators
 elfs-bsrpm python-rpm-generators
 
 STAGE=1 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/python-rpm-generators/SRPMS/python-rpm-generators-12-8.el9.src.rpm
-```
 
-Make sure we get into the routine of updating the local repos.
-The next build will fail without the previous RPM macros
-```
+# Make sure we get into the routine of updating the local repos.
+# The next build will fail without the previous RPM macros
 elfs-repo
 ```
 
@@ -188,16 +186,12 @@ We need to also build a simple bootstrap toolchain for EL specific functionality
 elfs-download binutils
 
 elfs-bsrpm binutils
-```
 
---rpmbuild-opts allows us to specify any rpmbuild options for mock to use.
---with bootstrap is a build option where we tell binutils to build with a minimal amount of dependencies. 
-This also allows us to use the least amount of dependencies from Fedora for the build.
-```
+# --rpmbuild-opts allows us to specify any rpmbuild options for mock to use.
+# --with bootstrap is a build option where we tell binutils to build with a minimal amount of dependencies. 
+# This also allows us to use the least amount of dependencies from Fedora for the build.
 STAGE=1 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--with bootstrap" $ELFS/build/binutils/SRPMS/binutils-2.35.2-37.el9.src.rpm
-```
 
-```
 elfs-repo
 ```
 
@@ -221,17 +215,13 @@ elfs-repo
 elfs-download glibc
 
 elfs-bsrpm glibc
-```
 
-We have to invoke mock normally without the elfs-mock wrapper as elfs-mock is being a little fussy about quotations
-Once again we use the bootstrap option for glibc for the same reasons we use it for binutils.
---define '_unpackaged_files_terminate_build 0' This option is not a very safe option to use.
-It should never be used outside of testing or bootstrapping. Without this option our build will fail.
-```
+# We have to invoke mock normally without the elfs-mock wrapper as elfs-mock is being a little fussy about quotations
+# Once again we use the bootstrap option for glibc for the same reasons we use it for binutils.
+# --define '_unpackaged_files_terminate_build 0' This option is not a very safe option to use.
+# It should never be used outside of testing or bootstrapping. Without this option our build will fail.
 mock -r $ELFS/mockconfig/elfs-0.1-x86_64-bootstrap-stage2.cfg --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--with bootstrap --define '_unpackaged_files_terminate_build 0'" $ELFS/build/glibc/SRPMS/glibc-2.34-60.el9.src.rpm
-```
 
-```
 elfs-repo
 ```
 
@@ -265,15 +255,10 @@ Since we're only bootstrapping for x86_64 we need to remove some unwanted and un
 elfs-download gcc
 
 cd $ELFS/build/gcc
-```
 
-
-This patch will disable the cross_build macro for x86_64.
-```
+# This patch will disable the cross_build macro for x86_64.
 patch -Np1 -i $ELFS/patches/stage3_gcc_disable_build_cross.patch
-```
 
-```
 elfs-bsrpm gcc
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/gcc/SRPMS/gcc-11.3.1-4.3.el9.src.rpm
@@ -400,14 +385,10 @@ Audit has a work around patch for flex array in the source code which helps it b
 elfs-download audit
 
 cd $ELFS/build/audit
-```
 
-Removes use of the flex array workaround patch in the spec file.
-```
+# Removes use of the flex array workaround patch in the spec file.
 patch -Np1 -i $ELFS/patches/stage3_audit_remove_workaround_patching.patch
-```
 
-```
 elfs-bsrpm
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/audit/SRPMS/audit-3.0.7-103.el9.src.rpm
@@ -489,7 +470,6 @@ elfs-repo
 
 
 ### filesystem
-```
 elfs-download filesystem
 
 elfs-bsrpm filesystem
@@ -519,14 +499,10 @@ python3.9 is pretty fussy about using the "--without rpmwheels" build option. It
 elfs-download python3.9
 
 cd $ELFS/build/python3.9
-```
 
-Removes dependency on rpmwheels packages from spec file
-```
+# Removes dependency on rpmwheels packages from spec file
 patch -Np1 -i $ELFS/patches/stage3_python3.9_remove_rpmwheels_dependency.patch
-```
 
-```
 elfs-bsrpm python3.9
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/python3.9/SRPMS/python3.9-3.9.16-1.el9.1.src.rpm
@@ -563,15 +539,11 @@ elfs-repo
 elfs-download gnutls
 
 elfs-bsrpm gnutls
-```
 
-Certain tests will fail during our bootstrap of gnutls.
-Some of the tests are unable to pass because of our barebones EL environment
-```
+# Certain tests will fail during our bootstrap of gnutls.
+# Some of the tests are unable to pass because of our barebones EL environment
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--without tests" $ELFS/build/gnutls/SRPMS/gnutls-3.7.6-21.el9.src.rpm
-```
 
-```
 elfs-repo
 ```
 
@@ -580,14 +552,10 @@ elfs-repo
 elfs-download nss
 
 elfs-bsrpm nss
-```
 
-Build without tests as they fail in our minimal EL environment
-```
+# Build without tests as they fail in our minimal EL environment
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--without tests" $ELFS/build/nss/SRPMS/nss-3.90.0-3.el9.src.rpm
-```
 
-```
 elfs-repo
 ```
 
@@ -1412,14 +1380,10 @@ elfs-repo
 elfs-download python-psutil
 
 cd $ELFS/build/python-psutil
-```
 
-The tests fail when building this package inside of Mock, so we have to disable them.
-```
+# The tests fail when building this package inside of Mock, so we have to disable them.
 patch -Np1 -i $ELFS/patches/stage3_python-psutil_disable_tests.patch
-```
 
-```
 elfs-bsrpm python-psutil
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/python-psutil/SRPMS/python-psutil-5.8.0-12.el9.src.rpm
@@ -1451,22 +1415,16 @@ elfs-repo
 
 ## llvm
 llvm is required in order to bootstrap clang later on. We also need to build an earlier version of llvm as it doesn't require clang in order to build eliminating the chicken or the egg problem.
-
-
-Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific llvm version.
 ```
+# Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific llvm version.
 git clone -b "imports/r9/llvm-13.0.1-1.el9" https://git.rockylinux.org/staging/rpms/llvm $ELFS/build/llvm
-```
 
- We have to cd into the directory and run elfs-getsrc ourselves in order to fetch the lookaside sources.
-```
+# We have to cd into the directory and run elfs-getsrc ourselves in order to fetch the lookaside sources.
 cd $ELFS/build/llvm
 
 elfs-getsrc
-```
 
- We can now build the source RPM like we normally do
-```
+# We can now build the source RPM like we normally do
 elfs-bsrpm llvm
 
 STAGE=3 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/llvm/SRPMS/llvm-13.0.1-1.el9.src.rpm
@@ -1515,29 +1473,20 @@ For my system Clang would make it run out of memory. To counteract that I set my
 zram-size = 32000
 ```
 
-#### Building Clang
-
-Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific clang version.
+Building Clang
 ```
+# Instead of using our elfs-download wrapper we're going to use git directly to fetch the specific clang version.
 git clone -b "imports/r9/clang-13.0.1-1.el9" https://git.rockylinux.org/staging/rpms/clang $ELFS/build/clang
-```
 
-```
+# We need to patch out some tests and settings that don't work well with bootstrapping with ELFS
 cd $ELFS/build/clang
-```
 
-Make sure we run elfs-getsrc to download lookaside sources
-```
+# Make sure we run elfs-getsrc to download lookaside sources
 elfs-getsrc
-```
 
-We need to patch out some tests and settings that don't work well with bootstrapping with ELFS
-```
 patch -Np1 -i $ELFS/patches/stage4_clang-13.0.1-1.el9_make_bootstrappable.patch
-```
 
-Build our source RPM for Mock and finally build
-```
+# Build our source RPM for Mock and finally build
 elfs-bsrpm clang
 
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/clang/SRPMS/clang-13.0.1-1.el9.src.rpm
@@ -1553,27 +1502,19 @@ Rust is needed for building prefixdevname. The bootstrap of rust is pretty simpl
 git clone -b "imports/r9/rust-1.58.1-1.el9" https://git.rockylinux.org/staging/rpms/rust $ELFS/build/rust
 
 cd $ELFS/build/rust
-```
 
-Apply patch which makes rust bootstrappable
-```
+# Apply patch which makes rust bootstrappable
 patch -Np1 -i $ELFS/patches/stage4_rust_make_bootstrappable.patch
-```
 
-Need to use spectool to download bootstrap sources
-```
+# Need to use spectool to download bootstrap sources
 spectool -g SPECS/rust.spec
-```
 
-Move bootstrap sources to SOURCES directory
-```
+# Move bootstrap sources to SOURCES directory
 mv rust-1.57.0-x86_64-unknown-linux-gnu.tar.xz SOURCES/
 mv rustc-1.58.1-src.tar.xz SOURCES/
 mv wasi-libc-ad5133410f66b93a2381db5b542aad5e0964db96.tar.gz SOURCES/
-```
 
-Create source RPM and build
-```
+# Create source RPM and build
 elfs-bsrpm rust
 
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/rust/SRPMS/rust-1.58.1-1.el9.src.rpm
@@ -1708,20 +1649,14 @@ elfs-repo
 ### swig
 ```
 elfs-download swig
-```
 
-We can't use the elfs-bsrpm wrapper as we need to tell rpmbuild not to make an SRPM requiring ccache files
-```
+# We can't use the elfs-bsrpm wrapper as we need to tell rpmbuild not to make an SRPM requiring ccache files
 rpmbuild -bs --define "_topdir $ELFS/build/swig" --define "dist .el9" --without build_ccache_swig $ELFS/build/swig/SPECS/swig.spec
-```
 
---without build_ccache_swig 
-Since EL doesn't use the ccache feature we just disable it.
-```
+# --without build_ccache_swig 
+# Since EL doesn't use the ccache feature we just disable it
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp --rpmbuild-opts="--without build_ccache_swig" $ELFS/build/swig/SRPMS/swig-4.0.2-8.el9.src.rpm
-```
 
-```
 elfs-repo
 ```
 
@@ -1801,14 +1736,10 @@ elfs-repo
 elfs-download kernel
 
 cd $ELFS/build/kernel
-```
 
-We need to disable self-tests as we are unable to build and run them yet.
-```
+# We need to disable self-tests as we are unable to build and run them yet.
 patch -Np1 -i $ELFS/patches/stage4_kernel_disable_self-tests.patch
-```
 
-```
 elfs-bsrpm kernel
 
 STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/kernel/SRPMS/kernel-5.14.0-284.30.1.el9.src.rpm
@@ -1816,1058 +1747,3 @@ STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/kernel/SRPMS/kerne
 elfs-repo
 ```
 
-
-## Building The Standard Group
-The Standard group in Enterprise Linux is another essential group. As the name suggests it is the Standard group of packages for the system. 
-
-In this section we'll be building the sources required to create all the packages in the in the Standard group. Much like how we did for the Core group.
-
-Standard is made up of 32 mandatory packages, 47 default packages, and 9 optional. Some of these packages have already been built for Core, so we'll be skipping those during the Standard build.
-
-Here is the list of packages in Standard. This output comes from 'dnf groupinfo "Standard"' on Rocky Linux. 
-```
-Group: Standard
- Description: The standard installation of Rocky Linux.
- Mandatory Packages:
-   acl
-   at
-   attr
-   bc
-   cpio
-   crontabs
-   cyrus-sasl-plain
-   dbus
-   ed
-   file
-   irqbalance
-   kpatch
-   kpatch-dnf
-   logrotate
-   lsof
-   mcelog
-   microcode_ctl
-   net-tools
-   pciutils
-   psacct
-   quota
-   rocky-release
-   rsyslog-gnutls
-   rsyslog-gssapi
-   rsyslog-relp
-   sudo
-   symlinks
-   systemd-udev
-   tar
-   tree
-   tuned
-   util-linux-user
- Default Packages:
-   bash-completion
-   blktrace
-   bluez
-   bpftool
-   bzip2
-   chrony
-   cockpit
-   cryptsetup
-   dos2unix
-   dosfstools
-   ethtool
-   fprintd-pam
-   gnupg2
-   iprutils
-   kmod-kvdo
-   ledmon
-   libstoragemgmt
-   lvm2
-   mailcap
-   man-pages
-   mdadm
-   mlocate
-   mtr
-   nano
-   nmap-ncat
-   nvme-cli
-   pinfo
-   plymouth
-   realmd
-   rsync
-   smartmontools
-   sos
-   sssd
-   strace
-   tcpdump
-   teamd
-   time
-   unzip
-   usbutils
-   vdo
-   vim-enhanced
-   virt-what
-   wget
-   which
-   words
-   xfsdump
-   zip
- Optional Packages:
-   cifs-utils
-   cockpit-doc
-   fwupd
-   ima-evm-utils
-   nfs-utils
-   nvmetcli
-   traceroute
-   vdo-support
-   zsh
-```
-
-### at
-```
-elfs-download at
-
-elfs-bsrpm at
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/at/SRPMS/at-3.1.23-11.el9.src.rpm 
-
-elfs-repo
-```
-
-
-### attr
-```
-elfs-download attr
-
-elfs-bsrpm attr
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/attr/SRPMS/attr-2.5.1-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### bc
-```
-elfs-download bc
-
-elfs-bsrpm bc
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/bc/SRPMS/bc-1.07.1-14.el9.src.rpm 
-
-elfs-repo
-```
-
-
-### cpio
-```
-elfs-download cpio
-
-elfs-bsrpm cpio
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/cpio/SRPMS/cpio-2.13-16.el9.src.rpm
-
-elfs-repo
-```
-
-
-### crontabs
-```
-elfs-download crontabs
-
-elfs-bsrpm crontabs
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/crontabs/SRPMS/crontabs-1.11-27.20190603git.el9.src.rpm
-
-elfs-repo
-```
-
-### libtool
-```
-elfs-download libtool
-
-elfs-bsrpm libtool
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/libtool/SRPMS/libtool-2.4.6-45.el9.src.rpm
-
-elfs-repo
-```
-
-### mariadb-connector-c
-```
-elfs-download mariadb-connector-c
-
-elfs-bsrpm mariadb-connector-c
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/mariadb-connector-c/SRPMS/mariadb-connector-c-3.2.6-1.el9.src.rpm
-
-elfs-repo
-```
-
-### libpq
-```
-elfs-download libpq
-
-elfs-bsrpm libpq
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/libpq/SRPMS/libpq-13.5-1.el9.src.rpm
-
-elfs-repo
-```
-
-### libdb
-```
-elfs-download libdb
-
-elfs-bsrpm libdb
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/libdb/SRPMS/libdb-5.3.28-53.el9.src.rpm
-
-elfs-repo
-```
-
-### nss_wrapper
-```
-elfs-download nss_wrapper
-
-elfs-bsrpm nss_wrapper
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/nss_wrapper/SRPMS/nss_wrapper-1.1.13-1.el9.src.rpm
-
-elfs-repo
-```
-
-### socket_wrapper
-```
-elfs-download socket_wrapper
-
-elfs-bsrpm socket_wrapper
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/socket_wrapper/SRPMS/socket_wrapper-1.2.5-4.el9.src.rpm
-
-elfs-repo
-```
-
-
-### cyrus-sasl
-```
-elfs-download cyrus-sasl
-```
-
-This patches makes cyrus-sasl bootstrappable by setting it's bootstrap macro to 1.
-```
-cd $ELFS/build/cyrus-sasl
-
-patch -Np1 -i $ELFS/patches/stage4_cyrus-sasl_make_bootstrappable.patch
-```
-
-```
-elfs-bsrpm cyrus-sasl
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/cyrus-sasl/SRPMS/cyrus-sasl-2.1.27-21.el9.src.rpm
-
-elfs-repo
-```
-
-
-### ed
-```
-elfs-download ed
-
-elfs-bsrpm ed
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/ed/SRPMS/ed-1.14.2-12.el9.src.rpm
-
-elfs-repo
-```
-
-
-### file
-```
-elfs-download file
-
-elfs-bsrpm file
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/file/SRPMS/file-5.39-12.1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### kpatch
-```
-elfs-download kpatch
-
-elfs-bsrpm kpatch
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/kpatch/SRPMS/kpatch-0.9.7-2.el9.src.rpm
-
-elfs-repo
-```
-
-
-### lsof
-```
-elfs-download lsof
-
-elfs-bsrpm lsof
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/lsof/SRPMS/lsof-4.94.0-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### mcelog
-```
-elfs-download mcelog
-
-elfs-bsrpm mcelog
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/mcelog/SRPMS/mcelog-189-0.el9.src.rpm
-
-elfs-repo
-```
-
-
-### net-tools
-```
-elfs-download net-tools
-
-elfs-bsrpm net-tools
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/net-tools/SRPMS/net-tools-2.0-0.62.20160912git.el9.src.rpm
-
-elfs-repo
-```
-
-
-### pciutils
-```
-elfs-download pciutils
-
-elfs-bsrpm pciutils
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/pciutils/SRPMS/pciutils-3.7.0-5.el9.src.rpm
-
-elfs-repo
-```
-
-
-### psacct
-```
-elfs-download psacct
-
-elfs-bsrpm psacct
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/psacct/SRPMS/psacct-6.6.4-12.el9.src.rpm
-
-elfs-repo
-```
-
-
-### quota
-```
-elfs-download quota
-
-elfs-bsrpm quota
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/quota/SRPMS/quota-4.06-6.el9.src.rpm
-
-elfs-repo
-```
-
-
-### symlinks
-```
-elfs-download symlinks
-
-elfs-bsrpm symlinks
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/symlinks/SRPMS/symlinks-1.7-6.el9.src.rpm
-
-elfs-repo
-```
-
-
-### tar
-```
-elfs-download tar
-
-elfs-bsrpm tar
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/tar/SRPMS/tar-1.34-6.el9.src.rpm
-
-elfs-repo
-```
-
-
-### tree-pkg
-```
-elfs-download tree-pkg
-
-elfs-bsrpm tree-pkg
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/tree-pkg/SRPMS/tree-pkg-1.8.0-10.el9.src.rpm
-
-elfs-repo
-```
-
-
-### tuned
-```
-elfs-download tuned
-
-elfs-bsrpm tuned
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/tuned/SRPMS/tuned-2.20.0-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### bash-completion
-```
-elfs-download bash-completion
-
-elfs-bsrpm bash-completion
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/bash-completion/SRPMS/bash-completion-2.11-4.el9.src.rpm
-
-elfs-repo
-```
-
-
-### blktrace
-```
-elfs-download blktrace
-
-elfs-bsrpm blktrace
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/blktrace/SRPMS/blktrace-1.2.0-19.el9.src.rpm
-
-elfs-repo
-```
-
-
-### bluez
-```
-elfs-download bluez
-
-elfs-bsrpm bluez
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/bluez/SRPMS/bluez-5.64-2.el9.src.rpm
-
-elfs-repo
-```
-
-
-### bzip2
-```
-elfs-download bzip2
-
-elfs-bsrpm bzip2
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/bzip2/SRPMS/bzip2-1.0.8-8.el9.src.rpm
-
-elfs-repo
-```
-
-
-### chrony
-```
-elfs-download chrony
-
-elfs-bsrpm chrony
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/chrony/SRPMS/chrony-4.3-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### cockpit
-```
-elfs-download cockpit
-
-elfs-bsrpm cockpit
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/cockpit/SRPMS/cockpit-286.2-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### dos2unix
-```
-elfs-download dos2unix
-
-elfs-bsrpm dos2unix
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/dos2unix/SRPMS/dos2unix-7.4.2-4.el9.src.rpm
-
-elfs-repo
-```
-
-
-### dosfstools
-```
-elfs-download dosfstools
-
-elfs-bsrpm dosfstools
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/dosfstools/SRPMS/dosfstools-4.2-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### ethtool
-```
-elfs-download ethtool
-
-elfs-bsrpm ethtool
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/ethtool/SRPMS/ethtool-5.16-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### fprintd
-```
-elfs-download fprintd
-
-elfs-bsrpm fprintd
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/fprintd/SRPMS/fprintd-1.94.0-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### gnupg2
-```
-elfs-download gnupg2
-
-elfs-bsrpm gnupg2
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/fprintd/SRPMS/fprintd-1.94.0-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### iprutils
-```
-elfs-download iprutils
-
-elfs-bsrpm iprutils
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/iprutils/SRPMS/iprutils-2.4.19-5.el9.src.rpm
-
-elfs-repo
-```
-
-
-### kmod-kvdo
-```
-elfs-download kmod-kvdo
-
-elfs-bsrpm kmod-kvdo
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/kmod-kvdo/SRPMS/kmod-kvdo-8.2.1.6-75.el9.src.rpm
-
-elfs-repo
-```
-
-
-### ledmon
-```
-elfs-download ledmon
-
-elfs-bsrpm ledmon
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/ledmon/SRPMS/ledmon-0.96-5.el9.src.rpm
-
-elfs-repo
-```
-
-
-### libstoragemgmt
-```
-elfs-download libstoragemgmt
-
-elfs-bsrpm libstoragemgmt
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/libstoragemgmt/SRPMS/libstoragemgmt-1.9.5-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### mailcap
-```
-elfs-download mailcap
-
-elfs-bsrpm mailcap
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/mailcap/SRPMS/mailcap-2.1.49-5.el9.src.rpm
-
-elfs-repo
-```
-
-
-### man-pages
-```
-elfs-download man-pages
-
-elfs-bsrpm man-pages
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/man-pages/SRPMS/man-pages-5.10-6.el9.src.rpm
-
-elfs-repo
-```
-
-
-### mdadm
-```
-elfs-download mdadm
-
-elfs-bsrpm mdadm
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/mdadm/SRPMS/mdadm-4.2-8.el9.src.rpm
-
-elfs-repo
-```
-
-
-### mlocate
-```
-elfs-download mlocate
-
-elfs-bsrpm mlocate
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/mlocate/SRPMS/mlocate-0.26-30.el9.src.rpm
-
-elfs-repo
-```
-
-
-### mtr
-```
-elfs-download mtr
-
-elfs-bsrpm mtr
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/mtr/SRPMS/mtr-0.94-4.el9.src.rpm
-
-elfs-repo
-```
-
-
-### nano
-```
-elfs-download nano
-
-elfs-bsrpm nano
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/nano/SRPMS/nano-5.6.1-5.el9.src.rpm
-
-elfs-repo
-```
-
-
-### nmap
-```
-elfs-download nmap
-
-elfs-bsrpm nmap
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/nmap/SRPMS/nmap-7.91-12.el9.src.rpm
-
-elfs-repo
-```
-
-
-### libnvme
-```
-elfs-download libnvme
-
-elfs-bsrpm libnvme
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/libnvme/SRPMS/libnvme-1.2-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### nvme-cli
-```
-elfs-download nvme-cli
-
-elfs-bsrpm nvme-cli
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/nvme-cli/SRPMS/nvme-cli-2.2.1-4.el9.src.rpm
-
-elfs-repo
-```
-
-
-### pinfo
-```
-elfs-download pinfo
-
-elfs-bsrpm pinfo
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/pinfo/SRPMS/pinfo-0.6.10-29.el9.src.rpm
-
-elfs-repo
-```
-
-
-### plymouth
-```
-elfs-download plymouth
-
-elfs-bsrpm plymouth
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/plymouth/SRPMS/plymouth-0.9.5-6.20210331git1ea1020.el9.src.rpm
-
-elfs-repo
-```
-
-
-### realmd
-```
-elfs-download realmd
-
-elfs-bsrpm realmd
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/realmd/SRPMS/realmd-0.17.1-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### rsync
-```
-elfs-download rsync 
-
-elfs-bsrpm rsync
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/rsync/SRPMS/rsync-3.2.3-19.el9.src.rpm
-
-elfs-repo
-```
-
-
-### smartmontools
-```
-elfs-download smartmontools
-
-elfs-bsrpm smartmontools
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/smartmontools/SRPMS/smartmontools-7.2-6.el9.src.rpm
-
-elfs-repo
-```
-
-
-### sos
-```
-elfs-download sos
-
-elfs-bsrpm sos
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/sos/SRPMS/sos-4.6.0-2.el9.src.rpm 
-
-elfs-repo
-```
-
-
-### strace
-```
-elfs-download strace
-
-elfs-bsrpm strace
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/strace/SRPMS/strace-5.18-2.el9.src.rpm
-
-elfs-repo
-```
-
-### tcpdump
-```
-elfs-download tcpdump
-
-elfs-bsrpm tcpdump
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/tcpdump/SRPMS/tcpdump-4.99.0-6.el9.src.rpm
-
-elfs-repo
-```
-
-### libteam
-```
-elfs-download libteam
-
-elfs-bsrpm libteam
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/libteam/SRPMS/libteam-1.31-16.el9.src.rpm
-
-elfs-repo
-```
-
-
-### time
-```
-elfs-download time
-
-elfs-bsrpm time
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/time/SRPMS/time-1.9-18.el9.src.rpm
-
-elfs-repo
-```
-
-
-### unzip
-```
-elfs-download unzip
-
-elfs-bsrpm unzip
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/unzip/SRPMS/unzip-6.0-56.el9.src.rpm
-
-elfs-repo
-```
-
-
-### usbutils
-```
-elfs-download usbutils
-
-elfs-bsrpm usbutils
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/usbutils/SRPMS/usbutils-013-4.el9.src.rpm
-
-elfs-repo
-```
-
-
-### vdo
-```
-elfs-download vdo
-
-elfs-bsrpm vdo
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/vdo/SRPMS/vdo-8.2.0.2-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### vim
-```
-elfs-download vim
-
-elfs-bsrpm vim
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/vim/SRPMS/vim-8.2.2637-20.el9.src.rpm
-
-elfs-repo
-```
-
-
-### virt-what
-```
-elfs-download virt-what
-
-elfs-bsrpm virt-what
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/virt-what/SRPMS/virt-what-1.25-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### wget
-```
-elfs-download wget
-
-elfs-bsrpm wget
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/wget/SRPMS/wget-1.21.1-7.el9.src.rpm
-
-elfs-repo
-```
-
-
-### which
-```
-elfs-download which
-
-elfs-bsrpm which
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/which/SRPMS/which-2.21-28.el9.src.rpm
-
-elfs-repo
-```
-
-
-### words
-```
-elfs-download words
-
-elfs-bsrpm words
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/words/SRPMS/words-3.0-39.el9.src.rpm
-
-elfs-repo
-```
-
-
-### xfsdump
-```
-elfs-download xfsdump
-
-elfs-bsrpm xfsdump
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/xfsdump/SRPMS/xfsdump-3.1.10-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### zip
-```
-elfs-download zip
-
-elfs-bsrpm zip
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/zip/SRPMS/zip-3.0-35.el9.src.rpm
-
-elfs-repo
-```
-
-
-### cifs-utils
-```
-elfs-download cifs-utils
-
-elfs-bsrpm cifs-utils
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/cifs-utils/SRPMS/cifs-utils-7.0-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### efivar
-pesign requires efivar.
-```
-elfs-download efivar
-
-elfs-bsrpm efivar
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/efivar/SRPMS/efivar-38-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### pesign
-fwupd requires pesign.
-```
-elfs-download pesign
-
-elfs-bsrpm pesign
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/pesign/SRPMS/pesign-115-6.el9.src.rpm
-
-elfs-repo
-```
-
-
-### meson
-fwupd requires meson >= 0.61.0.
-```
-elfs-download meson
-
-elfs-bsrpm meson
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/meson/SRPMS/meson-0.63.3-1.el9.src.rpm
-
-elfs-repo
-```
-
-
-### fwupd
-```
-elfs-download fwupd
-
-elfs-bsrpm fwupd
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/fwupd/SRPMS/fwupd-1.8.10-2.el9.src.rpm
-
-elfs-repo
-```
-
-
-### ima-evm-utils
-```
-elfs-download ima-evm-utils
-
-elfs-bsrpm ima-evm-utils
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/ima-evm-utils/SRPMS/ima-evm-utils-1.4-4.el9.src.rpm
-
-elfs-repo
-```
-
-
-### nfs-utils
-```
-elfs-download nfs-utils
-
-elfs-bsrpm nfs-utils
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/nfs-utils/SRPMS/nfs-utils-2.5.4-18.el9.src.rpm
-
-elfs-repo
-```
-
-
-### nvmetcli
-```
-elfs-download nvmetcli
-
-elfs-bsrpm nvmetcli
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/nvmetcli/SRPMS/nvmetcli-0.7-3.el9.src.rpm
-
-elfs-repo
-```
-
-
-### traceroute
-```
-elfs-download traceroute
-
-elfs-bsrpm traceroute
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/traceroute/SRPMS/traceroute-2.1.0-16.el9.src.rpm
-
-elfs-repo
-```
-
-
-### zsh
-```
-elfs-download zsh
-
-elfs-bsrpm zsh
-
-STAGE=4 elfs-mock --resultdir $ELFS/localrepo/tmp $ELFS/build/zsh/SRPMS/zsh-5.8-9.el9.src.rpm
-
-elfs-repo
-```
