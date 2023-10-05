@@ -11,7 +11,8 @@ The purpose of ELFS is to be an educational resource for those looking to get in
 
 There are now refined build notes available in extranotes. They give an outline of the guide and explain parts of the build process better. buildnotes has been updated to include any changes that were made during the refining process.
 
-At this time only the Core group build process is documented.
+~~At this time only the Core group build process is documented.~~
+Core and Standard groups are both documented.
 
 IMPORTANT: You must change the baseurl=file:/// repository path in the Mock configs to point towards your $ELFS/localrepo/tmp and $ELFS/localrepo/results paths! This must be changed for the ELFS repositories defined in the configuration files. By default they point to /home/maxinehayes90/elfs/localrepo/tmp and /home/maxinehayes90/elfs/localrepo/results.
 
