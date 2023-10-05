@@ -1,0 +1,11 @@
+--- a/SPECS/cyrus-sasl.spec	2023-10-03 22:35:28.196120136 +0000
++++ b/SPECS/cyrus-sasl.spec	2023-10-03 22:35:41.453025091 +0000
+@@ -3,7 +3,7 @@
+ %global homedir     /run/saslauthd
+ 
+ %global _plugindir2 %{_libdir}/sasl2
+-%global bootstrap_cyrus_sasl 0
++%global bootstrap_cyrus_sasl 1
+ %global gdbm_db_file /etc/sasl2/sasldb2
+ 
+ Summary: The Cyrus SASL library
