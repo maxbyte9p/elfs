@@ -1,4 +1,10 @@
-#!/bin/bash
+#!/bin/false
+
+if [ -z "$PS1" ]; then
+	echo -e "Please, source this script with\n$ source $0\nrather than attempting to run it in a shell"
+	exit
+fi
+
 ## ELFS Env Setup
 ELFS_VERSION="0.1"
 
